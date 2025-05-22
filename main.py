@@ -1,25 +1,21 @@
 from fastapi import FastAPI
-
+from routes.routes import router
+from DbConfig.db import client
 app=FastAPI()
 
 
-@app.get('/')
-
-def root():
-    return {
-        'data':{
-            'name':'nitish',
-            'age':18,
-            'occupation': 'student'
-        }
-    }
+app.include_router(router)
 
 
-@app.get('/about')
-def about():
-    return {
-        'data':{
-            'This is simply about page '
-        }
-    }
 
+from fastapi.staticfiles import StaticFiles
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
+
+@app.on_event("startup")
+async def connect_to_db():
+    try:
+        await client.admin.command("ping")
+        print(" Database connected successfully")
+    except Exception as e:
+        print(f" Database connection failed: {e}")
