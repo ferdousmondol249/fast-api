@@ -44,6 +44,6 @@ async def registration_router(reg:register_model):
     return await registration_user(reg)
 
 
-@router.get('/login')
+@router.post('/login')
 async def login_router(email: str, password: str):
     return await login_user(email, password)
